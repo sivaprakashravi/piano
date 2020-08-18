@@ -1,0 +1,20 @@
+<div
+  tabindex="1"
+  #board
+  class="board"
+  (keydown)="down($event)"
+  (keyup)="up($event)"
+>
+<div class="keys">
+    <div class="white">
+        <ul>
+            <li *ngFor="let w of white">{{w}}</li>
+        </ul>
+    </div>
+    <div class="black">
+        <ul>
+            <li *ngFor="let b of black">{{b}}</li>
+        </ul>
+    </div>
+</div>
+</div>
