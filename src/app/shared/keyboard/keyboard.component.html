@@ -8,12 +8,12 @@
 <div class="keys">
     <div class="white">
         <ul>
-            <li *ngFor="let w of white">{{w}}</li>
+            <li *ngFor="let w of wKeys" [ngClass]="{'active': (w.keyCode === activeKey && !shift)}">{{w.key}}</li>
         </ul>
     </div>
     <div class="black">
         <ul>
-            <li *ngFor="let b of black">{{b}}</li>
+            <li *ngFor="let b of bKeys" [ngClass]="{'active': (b.keyCode === activeKey && shift)}">{{b.key}}</li>
         </ul>
     </div>
 </div>

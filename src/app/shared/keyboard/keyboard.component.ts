@@ -5,7 +5,7 @@ import {
   ElementRef,
   AfterViewInit,
 } from '@angular/core';
-
+import { Constants } from '../../constants';
 @Component({
   selector: 'app-keyboard',
   templateUrl: './keyboard.component.html',
@@ -15,8 +15,12 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
   context: AudioContext = new AudioContext();
   oscillator: OscillatorNode;
   @ViewChild('board', { static: false }) board: ElementRef;
-  white = Array.from({ length: 52 }, (v, i) => i + 1);
-  black = Array.from({ length: 36 }, (v, i) => i + 1);
+  white = Constants.white;
+  black = Constants.black;
+  wKeys = Constants.wKeys;
+  bKeys = Constants.bKeys;
+  activeKey = null;
+  shift = false;
   constructor() {}
 
   ngOnInit(): void {}
@@ -25,19 +29,32 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.board.nativeElement.focus());
   }
 
-  down(event) {
+  down({ altKey, ctrlKey, shiftKey, key, code, keyCode }) {
+    this.shift = shiftKey;
+    const actionKeys = altKey || ctrlKey;
     if (this.oscillator) {
       this.oscillator.stop();
     }
-    this.oscillator = this.context.createOscillator();
-    this.oscillator.frequency.setValueAtTime(880, this.context.currentTime);
-    this.oscillator.setPeriodicWave(this.setWave);
-    this.oscillator.connect(this.context.destination);
-    this.oscillator.start();
+    this.activeKey = keyCode;
+    const index = this[this.shift ? 'bKeys' : 'wKeys'].findIndex(
+      ({ keyCode }) => keyCode === this.activeKey
+    );
+    if (index > -1) {
+      this.oscillator = this.context.createOscillator();
+      this.oscillator.frequency.value = this[this.shift ? 'black' : 'white'][
+        index
+      ];
+      this.oscillator.setPeriodicWave(this.setWave);
+      this.oscillator.connect(this.context.destination);
+      this.oscillator.start();
+    }
   }
 
-  up(event) {
-    this.oscillator.stop();
+  up(event?) {
+    if (this.oscillator) {
+      this.oscillator.stop();
+    }
+    this.activeKey = null;
   }
 
   get setWave() {
@@ -55,5 +72,9 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
       disableNormalization: true,
     });
     return wave;
+  }
+
+  randomNumber(min, max) {
+    return Math.random() * (max - min) + min;
   }
 }

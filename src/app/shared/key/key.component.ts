@@ -14,14 +14,14 @@ export class KeyComponent implements OnInit {
     this.oscillator = this.context.createOscillator();
   }
 
-  down() {
+  down(e) {
     this.oscillator.frequency.value = 440;
     this.oscillator.type = 'sine';
     this.oscillator.connect(this.context.destination);
     this.oscillator.start()
   }
 
-  up() {
+  up(e) {
     this.oscillator.stop();
   }
 }
